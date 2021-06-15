@@ -1,4 +1,4 @@
-import { concat, Observable, of, Subscription, timer } from 'rxjs'
+import { concat, Observable, of, Subscription, timer, pipe } from 'rxjs'
 import { catchError, filter, map, reduce, startWith, take} from 'rxjs/operators';
 import { HttpClient } from './http-client.interface'
 
@@ -31,7 +31,8 @@ export class RXJSKatas {
    * (which you can read about here:  https://rxjs-dev.firebaseapp.com/api/index/function/of).
    */
   static createFromArray(theArray: number[]):Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+      return of(...theArray); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -41,7 +42,7 @@ export class RXJSKatas {
    * (remember to use the `new` keyword when invoking your constructor!)
    */
   static createFromFunction(theFunction): Observable<any> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+      return new Observable(theFunction); // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -54,7 +55,12 @@ export class RXJSKatas {
    * observable to emit using `subscriber.next()`.
    */
   static createObservable123Immediate():Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    const observable:Observable<number> = new Observable(subscriber => {
+      subscriber.next(1);
+      subscriber.next(2);
+      subscriber.next(3);
+     });
+    return   observable; // TODO: Replace this return value with the value specified in the comment above.
   }
   /**
    * There are many more ways to create observables (e.g. from DOM events, from ajax requests, etc.)
@@ -70,6 +76,13 @@ export class RXJSKatas {
 
   static subscribeToObservable<Type>(observableToSubscribe: Observable<Type>):void {
     // TODO: Subscribe to the passed-in observable.
+    observableToSubscribe.subscribe(val => console.log(val));
+    // const observable  = new Observable() ;
+    //     let num: number = 0;
+    //     observable.subscribe({
+    //       next(num) { console.log(num); }
+    //      // complete() { console.log('Finished sequence'); }
+    //     });
   }
 
   /**
@@ -81,6 +94,7 @@ export class RXJSKatas {
    * code that unsubscribes from the passed-in subscription.
    */
   static unsubscribeFromObservable<Type>(subscription: Subscription):void {
+    subscription.unsubscribe();
     return; // TODO: Unsubscribe the passed-in subscription
   }
 
@@ -99,7 +113,10 @@ export class RXJSKatas {
    * result of piping `observableToPipe` through `pipingFunction`.
    */
   static pipeObservableThroughFunction<Type>(observableToPipe: Observable<Type>, pipingFunction: Function): Observable<Type> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    
+      return observableToPipe.pipe(
+      pipingFunction());
+       // TODO: Replace this return value with the value specified in the comment above.
   }
   
   /**
@@ -124,50 +141,59 @@ export class RXJSKatas {
   * 
   * Let's give it a try!  The method below accepts an observable of numbers, and returns another 
   * observable of numbers.  Complete this method by using .pipe and the map function to multiply 
-  * each number in the originalObs by 2.
+  * each number in the originalObs by 2.     #7
   */
 
   static mapObservable(originalObs: Observable<number>): Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return   originalObs.pipe(map(number => number * 2)); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
    * This pattern works for all of the transformation methods listed in the link below.  Let's try 
    * another one out.  In the function below, use .pipe with the startWith operator to append the 
-   * number `numberToAppend` to the observable `observableToAppend`.
+   * number `numberToAppend` to the observable `observableToAppend`.   #8
    */
   
   static appendToStart<Type>(obs: Observable<Type>, numberToAppend:Type):Observable<Type> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return  obs.pipe(startWith(numberToAppend)); 
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
    * Let's try a few more.  Use the filter operator to filter the items in an observable using a callback
-   * function. 
+   * function.   #9
    */
 
   static filterObservable(observableToPipe: Observable<number>): Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return observableToPipe.pipe(
+      filter(num => num % 2 ===0) )  ; // TODO: Replace this return value with the value specified in the comment above.
   }
 
 
   /**
    * Next, use the reduce operator to filter the items in an observable using a callback function.
+   *            #10
    */
 
   static reduceObservable(observableToPipe: Observable<number>): Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return observableToPipe.pipe(
+      reduce((acc:number, val:number):number => acc +val )); 
+      // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
    * Let's try something a little more advanced.  In this function, you'll create an observable that emits
    * the numbers 1, 2, and 3 at 50 millisecond intervals, before completing.  To do this, you'll use the
    * `timer` creation function (https://rxjs-dev.firebaseapp.com/api/index/function/timer), as well as the
-   * `.pipe` method with the `map` and `take` operators.
+   * `.pipe` method with the `map` and `take` operators.          #11
    */
 
   static createObservable123delay():Observable<number> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return timer(0, 50).pipe(
+      map((num:number) => num + 1 ),
+      take(3)  ); 
+      // TODO: Replace this return value with the value specified in the comment above.
   }
   
   /**
@@ -186,7 +212,8 @@ export class RXJSKatas {
    */
 
   static issueGetRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+        return  httpClient.get(`https://www.quotes4u.com/cervantes`);
+    ; // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -196,7 +223,10 @@ export class RXJSKatas {
    */
 
   static issuePostRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return  httpClient.post(`https://www.quotes4u.com/hugo`,
+    {quote: 'Life is the flower for which love is the honey.'}); 
+    
+    // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -204,7 +234,10 @@ export class RXJSKatas {
    * human face.'}` to the URL `https://www.quotes4u.com/hugo/0` to update our previous quote.
    */
   static issuePatchRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return  httpClient.patch(`https://www.quotes4u.com/hugo/0`,
+    {quote: 'Laughter is the sun that drives winter from the human face.'}) ; 
+    
+    // TODO: Replace this return value with the value specified in the comment above.
   }
   
   /**
@@ -212,7 +245,8 @@ export class RXJSKatas {
    * `https://www.quotes4u.com/hugo/0`
    */
   static issueDeleteRequest(httpClient: HttpClient):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above.
+    return httpClient.delete(`https://www.quotes4u.com/hugo/0`);
+     // TODO: Replace this return value with the value specified in the comment above.
   }
 
   /**
@@ -224,6 +258,7 @@ export class RXJSKatas {
    * your request through `catchError`!)
    */
   static issueGetRequestCatchError(httpClient: HttpClient, errorHandler: (err, caught) => Observable<object>):Observable<object> {
-    return; // TODO: Replace this return value with the value specified in the comment above. 
+    return httpClient.get(`https://www.quotes4u.com/hugo`).pipe(catchError, errorHandler);
+     // TODO: Replace this return value with the value specified in the comment above. 
   }
 }
